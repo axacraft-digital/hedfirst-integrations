@@ -61,7 +61,7 @@ export function Integrations() {
                 <Link
                   to='/integrations/$integration'
                   params={{ integration: integration.slug }}
-                  className='block rounded-lg border p-4 hover:shadow-md'
+                  className='block h-full rounded-lg border p-4 hover:shadow-md'
                 >
                   <div className='mb-8 flex items-center justify-between'>
                     <div className='bg-muted flex size-10 items-center justify-center rounded-lg p-2'>
