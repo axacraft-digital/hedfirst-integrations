@@ -15,7 +15,7 @@ const statusBadgeConfig: Record<
 > = {
   valid: {
     label: 'Connected',
-    className: 'border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-950',
+    className: 'border-green-300 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950 dark:text-green-400',
   },
   invalid: {
     label: 'Issue',
