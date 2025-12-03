@@ -23,7 +23,6 @@ export function CredentialField({
   label,
   configured,
   lastUpdated,
-  lastUpdatedBy,
   placeholder = 'Enter new value to update',
 }: CredentialFieldProps) {
   return (

@@ -5,7 +5,6 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { Separator } from '@/components/ui/separator'
-import { Button } from '@/components/ui/button'
 import { IntegrationsPrimaryButtons } from './components/integrations-primary-buttons'
 import { integrations } from './data/integrations'
 
