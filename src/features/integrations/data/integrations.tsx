@@ -1,11 +1,20 @@
 import { Plug2 } from 'lucide-react'
+import type { ValidationStatus } from './integration-details'
 
-export const integrations = [
+export const integrations: {
+  name: string
+  slug: string
+  logo: React.ReactNode
+  connected: boolean
+  status: ValidationStatus
+  desc: string
+}[] = [
   {
     name: 'PayTheory',
     slug: 'paytheory',
     logo: <Plug2 />,
     connected: true,
+    status: 'invalid',
     desc: 'Payment processing for healthcare transactions.',
   },
   {
@@ -13,6 +22,7 @@ export const integrations = [
     slug: 'dosespot',
     logo: <Plug2 />,
     connected: true,
+    status: 'valid',
     desc: 'E-prescribing and medication management integration.',
   },
   {
@@ -20,6 +30,7 @@ export const integrations = [
     slug: 'shipstation',
     logo: <Plug2 />,
     connected: false,
+    status: 'unconfigured',
     desc: 'Shipping and fulfillment for pharmacy orders.',
   },
   {
@@ -27,6 +38,7 @@ export const integrations = [
     slug: 'zoom',
     logo: <Plug2 />,
     connected: true,
+    status: 'pending',
     desc: 'Telemedicine video consultations platform.',
   },
   {
@@ -34,6 +46,7 @@ export const integrations = [
     slug: 'activecampaign',
     logo: <Plug2 />,
     connected: false,
+    status: 'unconfigured',
     desc: 'Marketing automation and email campaigns.',
   },
   {
@@ -41,6 +54,7 @@ export const integrations = [
     slug: 'choosehealth',
     logo: <Plug2 />,
     connected: true,
+    status: 'valid',
     desc: 'Lab services and diagnostic testing integration.',
   },
   {
@@ -48,6 +62,7 @@ export const integrations = [
     slug: 'smartystreets',
     logo: <Plug2 />,
     connected: false,
+    status: 'unconfigured',
     desc: 'Address verification and validation service.',
   },
   {
@@ -55,6 +70,7 @@ export const integrations = [
     slug: 'claude-ai',
     logo: <Plug2 />,
     connected: false,
+    status: 'unconfigured',
     desc: 'AI-powered assistant for clinical support.',
   },
   {
@@ -62,6 +78,7 @@ export const integrations = [
     slug: 'slack',
     logo: <Plug2 />,
     connected: false,
+    status: 'unconfigured',
     desc: 'Team notifications and alerts via webhooks.',
   },
   {
@@ -69,6 +86,7 @@ export const integrations = [
     slug: 'aws',
     logo: <Plug2 />,
     connected: true,
+    status: 'valid',
     desc: 'Cloud services for S3, SES, and Pinpoint.',
   },
 ]

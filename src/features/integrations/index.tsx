@@ -7,6 +7,29 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { Separator } from '@/components/ui/separator'
 import { IntegrationsPrimaryButtons } from './components/integrations-primary-buttons'
 import { integrations } from './data/integrations'
+import type { ValidationStatus } from './data/integration-details'
+
+const statusBadgeConfig: Record<
+  ValidationStatus,
+  { label: string; className: string }
+> = {
+  valid: {
+    label: 'Connected',
+    className: 'border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-950',
+  },
+  invalid: {
+    label: 'Issue',
+    className: 'border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950 dark:text-red-400',
+  },
+  pending: {
+    label: 'Validating',
+    className: 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-400',
+  },
+  unconfigured: {
+    label: 'Connect',
+    className: 'bg-background shadow-xs dark:bg-input/30 dark:border-input',
+  },
+}
 
 export function Integrations() {
   return (
@@ -31,36 +54,35 @@ export function Integrations() {
         </div>
         <Separator className='my-4 shadow-sm' />
         <ul className='faded-bottom no-scrollbar grid gap-4 overflow-auto pb-16 md:grid-cols-2 lg:grid-cols-3'>
-          {integrations.map((integration) => (
-            <li key={integration.name}>
-              <Link
-                to='/integrations/$integration'
-                params={{ integration: integration.slug }}
-                className='block rounded-lg border p-4 hover:shadow-md'
-              >
-                <div className='mb-8 flex items-center justify-between'>
-                  <div className='bg-muted flex size-10 items-center justify-center rounded-lg p-2'>
-                    {integration.logo}
+          {integrations.map((integration) => {
+            const badge = statusBadgeConfig[integration.status]
+            return (
+              <li key={integration.name}>
+                <Link
+                  to='/integrations/$integration'
+                  params={{ integration: integration.slug }}
+                  className='block rounded-lg border p-4 hover:shadow-md'
+                >
+                  <div className='mb-8 flex items-center justify-between'>
+                    <div className='bg-muted flex size-10 items-center justify-center rounded-lg p-2'>
+                      {integration.logo}
+                    </div>
+                    <span
+                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-8 px-3 border ${badge.className}`}
+                    >
+                      {badge.label}
+                    </span>
                   </div>
-                  <span
-                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-8 px-3 border ${
-                      integration.connected
-                        ? 'border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-950'
-                        : 'bg-background shadow-xs dark:bg-input/30 dark:border-input'
-                    }`}
-                  >
-                    {integration.connected ? 'Connected' : 'Connect'}
-                  </span>
-                </div>
-                <div>
-                  <h2 className='mb-1 font-semibold'>{integration.name}</h2>
-                  <p className='line-clamp-2 text-gray-500'>
-                    {integration.desc}
-                  </p>
-                </div>
-              </Link>
-            </li>
-          ))}
+                  <div>
+                    <h2 className='mb-1 font-semibold'>{integration.name}</h2>
+                    <p className='line-clamp-2 text-gray-500'>
+                      {integration.desc}
+                    </p>
+                  </div>
+                </Link>
+              </li>
+            )
+          })}
         </ul>
       </Main>
     </>
