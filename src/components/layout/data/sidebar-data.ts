@@ -21,24 +21,31 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
+  Truck,
+  Bot,
+  Pill,
+  Building2,
+  Tag,
+  Mail,
+  ShoppingCart,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
   user: {
-    name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
+    name: 'kellys',
+    email: 'kellysmith@kellysmith.com',
     avatar: '/avatars/shadcn.jpg',
   },
   teams: [
     {
-      name: 'Shadcn Admin',
+      name: 'Hedfirst',
       logo: Command,
-      plan: 'Vite + ShadcnUI',
+      plan: '',
     },
     {
-      name: 'Acme Inc',
+      name: 'Teligant',
       logo: GalleryVerticalEnd,
       plan: 'Enterprise',
     },
@@ -58,43 +65,82 @@ export const sidebarData: SidebarData = {
           icon: LayoutDashboard,
         },
         {
-          title: 'Tasks',
-          url: '/tasks',
-          icon: ListTodo,
+          title: 'Messages',
+          url: '/chats',
+          icon: Mail,
         },
         {
-          title: 'Apps',
-          url: '/apps',
+          title: 'Products',
+          url: '/help-center',
           icon: Package,
         },
         {
-          title: 'Chats',
-          url: '/chats',
-          badge: '3',
-          icon: MessagesSquare,
+          title: 'Orders & Services',
+          icon: ShoppingCart,
+          items: [
+            {
+              title: 'All Orders',
+              url: '/orders',
+            },
+            {
+              title: 'Consultations',
+              url: '/orders/consultations',
+            },
+            {
+              title: 'Subscriptions',
+              url: '/orders/subscriptions',
+            },
+            {
+              title: 'One-time Purchases',
+              url: '/orders/one-time',
+            },
+          ],
         },
         {
           title: 'Users',
           url: '/users',
           icon: Users,
         },
+      ],
+    },
+    {
+      title: 'Administration',
+      items: [
         {
-          title: 'Secured by Clerk',
-          icon: ClerkLogo,
+          title: 'Settings',
+          icon: Settings,
           items: [
             {
-              title: 'Sign In',
-              url: '/clerk/sign-in',
+              title: 'Shipping Rules',
+              url: '/settings',
+              icon: Truck,
             },
             {
-              title: 'Sign Up',
-              url: '/clerk/sign-up',
+              title: 'Hedfirst AI',
+              url: '/settings/hedfirst-ai',
+              icon: Bot,
             },
             {
-              title: 'User Management',
-              url: '/clerk/user-management',
+              title: 'Integrations',
+              url: '/integrations',
+              icon: Pill,
+            },
+            {
+              title: 'Pharmacies',
+              url: '/settings/pharmacies',
+              icon: Building2,
+            },
+            {
+              title: 'Discount Codes',
+              url: '/settings/discount-codes',
+              icon: Tag,
             },
           ],
+        },
+        {
+          title: 'Help Center',
+          url: '/help-center',
+          icon: HelpCircle,
         },
       ],
     },
@@ -102,9 +148,33 @@ export const sidebarData: SidebarData = {
       title: 'Pages',
       items: [
         {
-          title: 'Auth',
+          title: 'Template Pages',
           icon: ShieldCheck,
           items: [
+            {
+              title: 'Dashboard',
+              url: '/',
+            },
+            {
+              title: 'Tasks',
+              url: '/tasks',
+            },
+            {
+              title: 'Apps',
+              url: '/apps',
+            },
+            {
+              title: 'Chats',
+              url: '/chats',
+            },
+            {
+              title: 'Users',
+              url: '/users',
+            },
+            {
+              title: 'Coming Soon',
+              url: '/help-center',
+            },
             {
               title: 'Sign In',
               url: '/sign-in',
@@ -125,79 +195,47 @@ export const sidebarData: SidebarData = {
               title: 'OTP',
               url: '/otp',
             },
-          ],
-        },
-        {
-          title: 'Errors',
-          icon: Bug,
-          items: [
             {
-              title: 'Unauthorized',
-              url: '/errors/unauthorized',
-              icon: Lock,
-            },
-            {
-              title: 'Forbidden',
-              url: '/errors/forbidden',
-              icon: UserX,
-            },
-            {
-              title: 'Not Found',
-              url: '/errors/not-found',
-              icon: FileX,
-            },
-            {
-              title: 'Internal Server Error',
-              url: '/errors/internal-server-error',
-              icon: ServerOff,
-            },
-            {
-              title: 'Maintenance Error',
-              url: '/errors/maintenance-error',
-              icon: Construction,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: 'Other',
-      items: [
-        {
-          title: 'Settings',
-          icon: Settings,
-          items: [
-            {
-              title: 'Profile',
+              title: 'Settings - Profile',
               url: '/settings',
-              icon: UserCog,
             },
             {
-              title: 'Account',
+              title: 'Settings - Account',
               url: '/settings/account',
-              icon: Wrench,
             },
             {
-              title: 'Appearance',
+              title: 'Settings - Appearance',
               url: '/settings/appearance',
-              icon: Palette,
             },
             {
-              title: 'Notifications',
+              title: 'Settings - Notifications',
               url: '/settings/notifications',
-              icon: Bell,
             },
             {
-              title: 'Display',
+              title: 'Settings - Display',
               url: '/settings/display',
-              icon: Monitor,
+            },
+            {
+              title: '401 Unauthorized',
+              url: '/errors/unauthorized',
+            },
+            {
+              title: '403 Forbidden',
+              url: '/errors/forbidden',
+            },
+            {
+              title: '404 Not Found',
+              url: '/errors/not-found',
+            },
+            {
+              title: '500 Server Error',
+              url: '/errors/internal-server-error',
+            },
+            {
+              title: '503 Maintenance',
+              url: '/errors/maintenance-error',
             },
           ],
-        },
-        {
-          title: 'Help Center',
-          url: '/help-center',
-          icon: HelpCircle,
         },
       ],
     },
