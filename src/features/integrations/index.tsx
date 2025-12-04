@@ -13,20 +13,20 @@ const statusBadgeConfig: Record<
   ValidationStatus,
   { label: string; className: string }
 > = {
-  valid: {
+  connected: {
     label: 'Connected',
     className: 'border-green-300 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950 dark:text-green-400',
   },
-  invalid: {
+  issue: {
     label: 'Issue',
     className: 'border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950 dark:text-red-400',
   },
-  pending: {
-    label: 'Validating',
+  not_tested: {
+    label: 'Not Tested',
     className: 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-400',
   },
-  unconfigured: {
-    label: 'Connect',
+  not_connected: {
+    label: 'Not Connected',
     className: 'bg-background shadow-xs dark:bg-input/30 dark:border-input',
   },
 }

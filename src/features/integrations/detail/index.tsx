@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, getRouteApi } from '@tanstack/react-router'
-import { ArrowLeft, Lock, RefreshCw } from 'lucide-react'
+import { ArrowLeft, Lock, RefreshCw, Webhook } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -32,6 +32,8 @@ import {
 } from '@/components/ui/alert-dialog'
 import { ValidationStatusBanner } from '../components/validation-status-banner'
 import { CredentialField } from '../components/credential-field'
+import { WebhookScenarios } from '../components/webhook-scenarios'
+import { AddWebhookDialog } from '../components/add-webhook-dialog'
 import { integrationDetails } from '../data/integration-details'
 
 const route = getRouteApi('/_authenticated/integrations/$integration')
@@ -39,8 +41,35 @@ const route = getRouteApi('/_authenticated/integrations/$integration')
 export function IntegrationDetail() {
   const { integration: integrationSlug } = route.useParams()
   const integration = integrationDetails[integrationSlug]
-  const [showInvalidBanner, setShowInvalidBanner] = useState(true)
-  const [showValidBanner, setShowValidBanner] = useState(true)
+  const [showBanner, setShowBanner] = useState(true)
+
+  // Derive UI state from integration data
+  const isNotConnected = integration?.validation.status === 'not_connected'
+
+  // Check if any credentials are configured
+  const hasConfiguredCredentials = integration?.credentials.some(
+    (cred) => cred.configured
+  ) ?? false
+
+  // Check if any config fields have values (non-empty strings for text fields)
+  const hasConfigValues = integration?.config.some((field) => {
+    if (field.type === 'text') {
+      return typeof field.value === 'string' && field.value.trim() !== ''
+    }
+    return false // Select and checkbox always have default values
+  }) ?? false
+
+  // Check if any webhook scenarios have URLs configured
+  const hasWebhookScenarios = integration?.webhookScenarios && integration.webhookScenarios.length > 0
+  const hasConfiguredWebhooks = integration?.webhookScenarios?.some(
+    (scenario) => scenario.webhookUrl.trim() !== ''
+  ) ?? false
+
+  // Can save if there's any data entered (config values, credentials, or webhooks)
+  const hasDataToSave = hasConfigValues || hasConfiguredCredentials || hasConfiguredWebhooks
+
+  // Can delete only if something has been configured
+  const canDelete = hasConfiguredCredentials || hasConfiguredWebhooks
 
   if (!integration) {
     return (
@@ -104,25 +133,15 @@ export function IntegrationDetail() {
           </Button>
         </div>
 
-        {/* Validation Status Banners - showing both states for developer reference */}
-        <div className='flex flex-col gap-3'>
-          {showInvalidBanner && (
-            <ValidationStatusBanner
-              status='invalid'
-              message='401 Unauthorized: Invalid API key or merchant ID'
-              validatedAt='2025-12-03T12:30:00Z'
-              onClose={() => setShowInvalidBanner(false)}
-            />
-          )}
-          {showValidBanner && (
-            <ValidationStatusBanner
-              status='valid'
-              message='Connected to API successfully'
-              validatedAt='2025-12-03T10:45:00Z'
-              onClose={() => setShowValidBanner(false)}
-            />
-          )}
-        </div>
+        {/* Validation Status Banner */}
+        {showBanner && (
+          <ValidationStatusBanner
+            status={integration.validation.status}
+            message={integration.validation.message}
+            validatedAt={integration.validation.validatedAt}
+            onClose={() => setShowBanner(false)}
+          />
+        )}
 
         {/* Status Toggle */}
         <div className='mt-6 flex items-center gap-4'>
@@ -130,9 +149,17 @@ export function IntegrationDetail() {
             Status
           </Label>
           <div className='flex items-center gap-2'>
-            <Switch id='status' defaultChecked={integration.enabled} />
+            <Switch
+              id='status'
+              defaultChecked={integration.enabled}
+              disabled={isNotConnected}
+            />
             <span className='text-muted-foreground text-sm'>
-              {integration.enabled ? 'Enabled' : 'Disabled'}
+              {isNotConnected
+                ? 'Configure credentials to enable'
+                : integration.enabled
+                  ? 'Enabled'
+                  : 'Disabled'}
             </span>
           </div>
         </div>
@@ -218,35 +245,62 @@ export function IntegrationDetail() {
           ))}
         </div>
 
+        {/* Webhook Scenarios Section (Slack-specific) */}
+        {hasWebhookScenarios && (
+          <>
+            <Separator className='my-6' />
+            <div className='flex items-start justify-between gap-4'>
+              <div className='space-y-1'>
+                <h3 className='flex items-center gap-2 text-lg font-medium'>
+                  <Webhook className='h-4 w-4' />
+                  Webhook Scenarios
+                </h3>
+                <p className='text-muted-foreground text-sm'>
+                  Configure webhook URLs for each alert type. Each scenario can post to a different Slack channel.
+                </p>
+              </div>
+              <AddWebhookDialog />
+            </div>
+            <Separator className='my-4' />
+            <div className='lg:max-w-2xl'>
+              <WebhookScenarios scenarios={integration.webhookScenarios!} />
+            </div>
+          </>
+        )}
+
         {/* Action Buttons */}
         <div className='mt-8 flex justify-between'>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant='destructive'>Remove Integration</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Remove {integration.name}?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will permanently remove the {integration.name} integration
-                  and delete all associated credentials. This action cannot be
-                  undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction className='bg-destructive text-white hover:bg-destructive/90'>
-                  Remove Integration
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          {canDelete ? (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant='destructive'>Remove Integration</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Remove {integration.name}?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently remove the {integration.name} integration
+                    and delete all associated credentials. This action cannot be
+                    undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction className='bg-destructive text-white hover:bg-destructive/90'>
+                    Remove Integration
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          ) : (
+            <div /> // Empty placeholder to maintain flex justify-between layout
+          )}
 
           <div className='flex gap-2'>
             <Button variant='outline' asChild>
               <Link to='/integrations'>Cancel</Link>
             </Button>
-            <Button>Save Changes</Button>
+            <Button disabled={!hasDataToSave}>Save Changes</Button>
           </div>
         </div>
       </Main>

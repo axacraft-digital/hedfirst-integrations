@@ -11,29 +11,29 @@ interface ValidationStatusBannerProps {
 }
 
 const statusConfig = {
-  valid: {
+  connected: {
     icon: CheckCircle,
-    title: 'Credentials Valid',
+    title: 'Connected',
     className:
       'border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950',
     iconClassName: 'text-green-600 dark:text-green-400',
   },
-  invalid: {
+  issue: {
     icon: XCircle,
-    title: 'Credentials Invalid',
+    title: 'Issue',
     className: 'border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950',
     iconClassName: 'text-red-600 dark:text-red-400',
   },
-  pending: {
+  not_tested: {
     icon: Loader2,
-    title: 'Validating...',
+    title: 'Not Tested',
     className:
       'border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950',
-    iconClassName: 'text-yellow-600 dark:text-yellow-400 animate-spin',
+    iconClassName: 'text-yellow-600 dark:text-yellow-400',
   },
-  unconfigured: {
+  not_connected: {
     icon: CircleDashed,
-    title: 'Not Configured',
+    title: 'Not Connected',
     className:
       'border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900',
     iconClassName: 'text-gray-500 dark:text-gray-400',

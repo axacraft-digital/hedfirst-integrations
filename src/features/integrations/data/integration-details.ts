@@ -1,4 +1,12 @@
-export type ValidationStatus = 'valid' | 'invalid' | 'pending' | 'unconfigured'
+export type ValidationStatus = 'connected' | 'not_connected' | 'not_tested' | 'issue'
+
+export interface WebhookScenario {
+  key: string
+  name: string
+  description: string
+  enabled: boolean
+  webhookUrl: string
+}
 
 export interface IntegrationCredential {
   key: string
@@ -25,6 +33,7 @@ export interface IntegrationDetail {
   enabled: boolean
   config: IntegrationConfig[]
   credentials: IntegrationCredential[]
+  webhookScenarios?: WebhookScenario[]
   validation: {
     status: ValidationStatus
     message?: string
@@ -54,23 +63,6 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
         type: 'text',
         value: 'Acme Health Clinic',
       },
-      {
-        key: 'environment',
-        label: 'Environment',
-        type: 'select',
-        value: 'production',
-        options: [
-          { label: 'Production', value: 'production' },
-          { label: 'Staging', value: 'staging' },
-        ],
-      },
-      {
-        key: 'epcsEnabled',
-        label: 'EPCS Enabled',
-        type: 'checkbox',
-        value: true,
-        description: 'Allow controlled substances prescribing',
-      },
     ],
     credentials: [
       {
@@ -89,7 +81,7 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
       },
     ],
     validation: {
-      status: 'valid',
+      status: 'connected',
       message: 'Connected to DoseSpot API successfully',
       validatedAt: '2025-12-03T10:45:00Z',
     },
@@ -108,16 +100,6 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
         label: 'Merchant ID',
         type: 'text',
         value: 'mrc_acme_12345',
-      },
-      {
-        key: 'environment',
-        label: 'Environment',
-        type: 'select',
-        value: 'production',
-        options: [
-          { label: 'Production', value: 'production' },
-          { label: 'Staging', value: 'staging' },
-        ],
       },
       {
         key: 'webhookUrl',
@@ -143,7 +125,7 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
       },
     ],
     validation: {
-      status: 'invalid',
+      status: 'issue',
       message: '401 Unauthorized: Invalid API key or merchant ID',
       validatedAt: '2025-12-03T12:30:00Z',
     },
@@ -163,16 +145,6 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
         type: 'text',
         value: '',
       },
-      {
-        key: 'environment',
-        label: 'Environment',
-        type: 'select',
-        value: 'staging',
-        options: [
-          { label: 'Production', value: 'production' },
-          { label: 'Staging', value: 'staging' },
-        ],
-      },
     ],
     credentials: [
       {
@@ -187,7 +159,7 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
       },
     ],
     validation: {
-      status: 'unconfigured',
+      status: 'not_connected',
       message: 'Integration has not been configured yet',
     },
     updatedAt: '2025-11-01T08:00:00Z',
@@ -205,16 +177,6 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
         label: 'Account ID',
         type: 'text',
         value: 'acme_zoom_001',
-      },
-      {
-        key: 'environment',
-        label: 'Environment',
-        type: 'select',
-        value: 'production',
-        options: [
-          { label: 'Production', value: 'production' },
-          { label: 'Staging', value: 'staging' },
-        ],
       },
       {
         key: 'autoRecording',
@@ -241,9 +203,8 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
       },
     ],
     validation: {
-      status: 'pending',
-      message: 'Validating credentials...',
-      validatedAt: '2025-12-03T14:00:00Z',
+      status: 'not_tested',
+      message: 'Credentials have not been tested yet',
     },
     updatedAt: '2025-11-20T16:00:00Z',
     updatedBy: 'admin@acme.com',
@@ -253,7 +214,7 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
     name: 'ActiveCampaign',
     slug: 'activecampaign',
     description: 'Marketing automation and email campaigns.',
-    enabled: false,
+    enabled: true,
     config: [
       {
         key: 'accountName',
@@ -281,7 +242,8 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
       },
     ],
     validation: {
-      status: 'unconfigured',
+      status: 'not_connected',
+      message: 'Integration has not been configured yet',
     },
     updatedAt: '2025-10-15T10:00:00Z',
     updatedBy: 'admin@acme.com',
@@ -291,23 +253,13 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
     name: 'ChooseHealth',
     slug: 'choosehealth',
     description: 'Lab services and diagnostic testing integration.',
-    enabled: true,
+    enabled: false,
     config: [
       {
         key: 'partnerId',
         label: 'Partner ID',
         type: 'text',
         value: 'acme_partner_001',
-      },
-      {
-        key: 'environment',
-        label: 'Environment',
-        type: 'select',
-        value: 'production',
-        options: [
-          { label: 'Production', value: 'production' },
-          { label: 'Staging', value: 'staging' },
-        ],
       },
     ],
     credentials: [
@@ -320,7 +272,7 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
       },
     ],
     validation: {
-      status: 'valid',
+      status: 'connected',
       message: 'Connected to ChooseHealth API successfully',
       validatedAt: '2025-12-02T09:00:00Z',
     },
@@ -349,18 +301,23 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
       {
         key: 'authId',
         label: 'Auth ID',
-        configured: false,
+        configured: true,
+        lastUpdated: '2025-11-05T14:00:00Z',
+        lastUpdatedBy: 'admin@acme.com',
       },
       {
         key: 'authToken',
         label: 'Auth Token',
-        configured: false,
+        configured: true,
+        lastUpdated: '2025-11-05T14:00:00Z',
+        lastUpdatedBy: 'admin@acme.com',
       },
     ],
     validation: {
-      status: 'unconfigured',
+      status: 'not_tested',
+      message: 'Credentials have not been tested yet',
     },
-    updatedAt: '2025-10-01T08:00:00Z',
+    updatedAt: '2025-11-05T14:00:00Z',
     updatedBy: 'admin@acme.com',
   },
   'claude-ai': {
@@ -396,7 +353,8 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
       },
     ],
     validation: {
-      status: 'unconfigured',
+      status: 'not_connected',
+      message: 'Integration has not been configured yet',
     },
     updatedAt: '2025-10-01T08:00:00Z',
     updatedBy: 'admin@acme.com',
@@ -406,26 +364,52 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
     name: 'Slack',
     slug: 'slack',
     description: 'Team notifications and alerts via webhooks.',
-    enabled: false,
-    config: [
+    enabled: true,
+    config: [],
+    credentials: [],
+    webhookScenarios: [
       {
-        key: 'defaultChannel',
-        label: 'Default Channel',
-        type: 'text',
-        value: '#alerts',
+        key: 'payment_failures',
+        name: 'Payment Failures',
+        description: 'Alert when a payment transaction fails or is declined',
+        enabled: true,
+        webhookUrl: 'https://hooks.slack.com/services/WORKSPACE/CHANNEL/TOKEN_payment',
       },
-    ],
-    credentials: [
       {
-        key: 'webhookUrl',
-        label: 'Webhook URL',
-        configured: false,
+        key: 'new_patient_signups',
+        name: 'New Patient Signups',
+        description: 'Alert when a new patient registers on the platform',
+        enabled: true,
+        webhookUrl: 'https://hooks.slack.com/services/WORKSPACE/CHANNEL/TOKEN_signup',
+      },
+      {
+        key: 'appointment_no_shows',
+        name: 'Appointment No-Shows',
+        description: 'Alert when a patient misses a scheduled telehealth visit',
+        enabled: false,
+        webhookUrl: '',
+      },
+      {
+        key: 'prescription_issues',
+        name: 'Prescription Issues',
+        description: 'Alert when an e-prescription fails or requires attention',
+        enabled: true,
+        webhookUrl: 'https://hooks.slack.com/services/WORKSPACE/CHANNEL/TOKEN_rx',
+      },
+      {
+        key: 'shipping_delays',
+        name: 'Shipping Delays',
+        description: 'Alert when order fulfillment encounters problems',
+        enabled: false,
+        webhookUrl: '',
       },
     ],
     validation: {
-      status: 'unconfigured',
+      status: 'connected',
+      message: '3 of 5 webhook scenarios configured',
+      validatedAt: '2025-12-01T10:00:00Z',
     },
-    updatedAt: '2025-10-01T08:00:00Z',
+    updatedAt: '2025-12-01T10:00:00Z',
     updatedBy: 'admin@acme.com',
   },
   aws: {
@@ -484,7 +468,7 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
       },
     ],
     validation: {
-      status: 'valid',
+      status: 'connected',
       message: 'Connected to AWS services successfully',
       validatedAt: '2025-12-03T08:00:00Z',
     },
