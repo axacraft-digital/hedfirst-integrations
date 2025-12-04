@@ -46,7 +46,7 @@ export const integrations: {
     slug: 'activecampaign',
     logo: <Plug2 />,
     enabled: true,
-    status: 'not_connected',
+    status: 'not_tested',
     desc: 'Marketing automation and email campaigns.',
   },
   {

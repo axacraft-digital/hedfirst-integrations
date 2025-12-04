@@ -23,6 +23,7 @@ export interface IntegrationConfig {
   value: string | boolean
   options?: { label: string; value: string }[]
   description?: string
+  error?: string
 }
 
 export interface IntegrationDetail {
@@ -106,6 +107,7 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
         label: 'Webhook URL',
         type: 'text',
         value: 'https://api.teligant.com/webhooks/paytheory',
+        error: 'Webhook URL must use HTTPS and include a valid path',
       },
     ],
     credentials: [
@@ -126,7 +128,7 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
     ],
     validation: {
       status: 'issue',
-      message: '401 Unauthorized: Invalid API key or merchant ID',
+      message: 'Webhook validation failed - please check the webhook URL configuration',
       validatedAt: '2025-12-03T12:30:00Z',
     },
     updatedAt: '2025-11-15T09:00:00Z',
@@ -233,19 +235,23 @@ export const integrationDetails: Record<string, IntegrationDetail> = {
       {
         key: 'apiKey',
         label: 'API Key',
-        configured: false,
+        configured: true,
+        lastUpdated: '2025-11-28T10:00:00Z',
+        lastUpdatedBy: 'admin@acme.com',
       },
       {
         key: 'apiUrl',
         label: 'API URL',
-        configured: false,
+        configured: true,
+        lastUpdated: '2025-11-28T10:00:00Z',
+        lastUpdatedBy: 'admin@acme.com',
       },
     ],
     validation: {
-      status: 'not_connected',
-      message: 'Integration has not been configured yet',
+      status: 'not_tested',
+      message: 'Credentials configured but Account Name and List ID are required',
     },
-    updatedAt: '2025-10-15T10:00:00Z',
+    updatedAt: '2025-11-28T10:00:00Z',
     updatedBy: 'admin@acme.com',
   },
   choosehealth: {

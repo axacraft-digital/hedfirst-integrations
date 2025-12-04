@@ -74,7 +74,25 @@ export function Integrations() {
                     </span>
                   </div>
                   <div>
-                    <h2 className='mb-1 font-semibold'>{integration.name}</h2>
+                    <div className='mb-1 flex items-center gap-2'>
+                      <h2 className='font-semibold'>{integration.name}</h2>
+                      <span
+                        className={`inline-flex items-center gap-1 text-xs ${
+                          integration.enabled
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-muted-foreground'
+                        }`}
+                      >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            integration.enabled
+                              ? 'bg-green-500'
+                              : 'bg-gray-400'
+                          }`}
+                        />
+                        {integration.enabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </div>
                     <p className='line-clamp-2 text-gray-500'>
                       {integration.desc}
                     </p>

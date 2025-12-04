@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, getRouteApi } from '@tanstack/react-router'
-import { ArrowLeft, Lock, RefreshCw, Webhook } from 'lucide-react'
+import { ArrowLeft, Loader2, Lock, RefreshCw, Webhook } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -30,6 +30,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { toast } from 'sonner'
 import { ValidationStatusBanner } from '../components/validation-status-banner'
 import { CredentialField } from '../components/credential-field'
 import { WebhookScenarios } from '../components/webhook-scenarios'
@@ -42,6 +43,22 @@ export function IntegrationDetail() {
   const { integration: integrationSlug } = route.useParams()
   const integration = integrationDetails[integrationSlug]
   const [showBanner, setShowBanner] = useState(true)
+  const [isTesting, setIsTesting] = useState(false)
+
+  // Simulate test connection
+  const handleTestConnection = () => {
+    setIsTesting(true)
+    setShowBanner(true)
+    // Simulate API call delay
+    setTimeout(() => {
+      setIsTesting(false)
+      toast.success('Connection test completed', {
+        description: integration?.validation.status === 'connected'
+          ? 'Credentials are valid'
+          : 'See status banner for details',
+      })
+    }, 2000)
+  }
 
   // Derive UI state from integration data
   const isNotConnected = integration?.validation.status === 'not_connected'
@@ -127,20 +144,40 @@ export function IntegrationDetail() {
 
         {/* Test Connection */}
         <div className='mb-4'>
-          <Button variant='outline'>
-            <RefreshCw className='mr-2 h-4 w-4' />
-            Test Connection
+          <Button
+            variant='outline'
+            onClick={handleTestConnection}
+            disabled={isTesting || isNotConnected}
+          >
+            {isTesting ? (
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+            ) : (
+              <RefreshCw className='mr-2 h-4 w-4' />
+            )}
+            {isTesting ? 'Testing...' : 'Test Connection'}
           </Button>
         </div>
 
         {/* Validation Status Banner */}
         {showBanner && (
-          <ValidationStatusBanner
-            status={integration.validation.status}
-            message={integration.validation.message}
-            validatedAt={integration.validation.validatedAt}
-            onClose={() => setShowBanner(false)}
-          />
+          isTesting ? (
+            <div className='flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900 dark:bg-blue-950'>
+              <Loader2 className='h-5 w-5 animate-spin text-blue-600 dark:text-blue-400' />
+              <div>
+                <p className='font-medium text-blue-900 dark:text-blue-100'>Validating credentials...</p>
+                <p className='text-sm text-blue-700 dark:text-blue-300'>
+                  Testing connection to {integration.name} API
+                </p>
+              </div>
+            </div>
+          ) : (
+            <ValidationStatusBanner
+              status={integration.validation.status}
+              message={integration.validation.message}
+              validatedAt={integration.validation.validatedAt}
+              onClose={() => setShowBanner(false)}
+            />
+          )
         )}
 
         {/* Status Toggle */}
@@ -180,11 +217,17 @@ export function IntegrationDetail() {
             <div key={field.key} className='grid gap-2'>
               <Label htmlFor={field.key}>{field.label}</Label>
               {field.type === 'text' && (
-                <Input
-                  id={field.key}
-                  defaultValue={field.value as string}
-                  placeholder={`Enter ${field.label.toLowerCase()}`}
-                />
+                <div className='space-y-1'>
+                  <Input
+                    id={field.key}
+                    defaultValue={field.value as string}
+                    placeholder={`Enter ${field.label.toLowerCase()}`}
+                    className={field.error ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                  />
+                  {field.error && (
+                    <p className='text-sm text-red-500'>{field.error}</p>
+                  )}
+                </div>
               )}
               {field.type === 'select' && (
                 <Select defaultValue={field.value as string}>
@@ -300,7 +343,16 @@ export function IntegrationDetail() {
             <Button variant='outline' asChild>
               <Link to='/integrations'>Cancel</Link>
             </Button>
-            <Button disabled={!hasDataToSave}>Save Changes</Button>
+            <Button
+              disabled={!hasDataToSave}
+              onClick={() => {
+                toast.success('Changes saved', {
+                  description: `${integration.name} integration settings have been updated.`,
+                })
+              }}
+            >
+              Save Changes
+            </Button>
           </div>
         </div>
       </Main>
